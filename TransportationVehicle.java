@@ -1,14 +1,3 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.io.PrintStream
- *  java.lang.Integer
- *  java.lang.Object
- *  java.lang.String
- *  java.lang.System
- *  java.util.ArrayList
- */
 package edu.gatech;
 
 import edu.gatech.Rider;
@@ -115,3 +104,4 @@ public class TransportationVehicle {
         System.out.println("drop off passengers - pickup passengers to capacity - move to next stop");
     }
 }
+

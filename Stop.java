@@ -1,21 +1,6 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.io.PrintStream
- *  java.lang.Class
- *  java.lang.Double
- *  java.lang.Integer
- *  java.lang.Object
- *  java.lang.String
- *  java.lang.System
- *  java.util.ArrayList
- *  java.util.PriorityQueue
- */
 package edu.gatech;
 
 import edu.gatech.Rider;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -31,7 +16,7 @@ public class Stop {
     public Stop(int uniqueValue) {
         this.ID = uniqueValue;
         this.stopName = "";
-        this.ridersOnStop = new PriorityQueue();
+        this.ridersOnStop = new PriorityQueue<Rider>();
     }
 
     public Stop(int uniqueValue, String inputName, String address) {
@@ -64,7 +49,7 @@ public class Stop {
     }
 
     public void addRiderToStop(Rider rider) {
-        this.ridersOnStop.add((Object)rider);
+        this.ridersOnStop.add(rider);
     }
 
     public Double findDistance(Stop destination) {
@@ -72,13 +57,13 @@ public class Stop {
     }
 
     public ArrayList<Rider> exchangeRiders(int initialPassengerCount, int capacity) {
-        ArrayList riderList = new ArrayList();
+        ArrayList<Rider> riderList = new ArrayList<Rider>();
         int riderCount = this.ridersOnStop.size();
         int ableToBoard = capacity - initialPassengerCount;
         int i = 0;
         while (i < riderCount) {
             if (riderCount > ableToBoard) {
-                riderList.add((Object)((Rider)this.ridersOnStop.poll()));
+                riderList.add(this.ridersOnStop.poll());
                 System.out.println("Capacity has been reached for this bus. Rider(s) must wait for next bus.");
                 break;
             }

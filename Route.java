@@ -1,20 +1,7 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.io.PrintStream
- *  java.lang.Class
- *  java.lang.Integer
- *  java.lang.Object
- *  java.lang.String
- *  java.lang.System
- *  java.util.ArrayList
- *  java.util.HashMap
- */
+
 package edu.gatech;
 
 import edu.gatech.Road;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,23 +21,23 @@ public class Route {
         this.ID = uniqueValue;
         this.routeNumber = -1;
         this.routeName = "";
-        this.stopsOnRoute = new HashMap();
+        this.stopsOnRoute = new HashMap<Integer,Integer>();
     }
 
     public Route(int uniqueValue, int inputNumber, String inputName) {
         this.ID = uniqueValue;
         this.routeNumber = inputNumber;
         this.routeName = inputName;
-        this.stopsOnRoute = new HashMap();
-        this.roadsBetweenStops = new ArrayList();
+        this.stopsOnRoute = new HashMap<Integer, Integer>();
+        this.roadsBetweenStops = new ArrayList<Road>();
     }
 
     public Route(int uniqueValue, int inputNumber, String inputName, String routeType) {
         this.ID = uniqueValue;
         this.routeNumber = inputNumber;
         this.routeName = inputName;
-        this.stopsOnRoute = new HashMap();
-        this.roadsBetweenStops = new ArrayList();
+        this.stopsOnRoute = new HashMap<Integer,Integer>();
+        this.roadsBetweenStops = new ArrayList<Road>();
         this.routeType = routeType;
     }
 
@@ -63,11 +50,11 @@ public class Route {
     }
 
     public void addNewStop(int stopID) {
-        this.stopsOnRoute.put((Object)this.stopsOnRoute.size(), (Object)stopID);
+        this.stopsOnRoute.put(this.stopsOnRoute.size(), stopID);
     }
 
     public void addNewRoadBetweenStop(Road road) {
-        this.roadsBetweenStops.add((Object)road);
+        this.roadsBetweenStops.add(road);
     }
 
     public Integer getID() {

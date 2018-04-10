@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.lang.Integer
- *  java.lang.Object
- */
 package edu.gatech;
 
 public class MiniPair {
@@ -12,20 +5,15 @@ public class MiniPair {
     private Integer pairValue;
 
     public MiniPair(int inputID, int inputValue) {
-        this.pairID = inputID;
-        this.pairValue = inputValue;
+        pairID = inputID;
+        pairValue = inputValue;
     }
 
     public MiniPair() {
-        this.pairID = 0;
-        this.pairValue = 0;
+        pairID = 0;
+        pairValue = 0;
     }
 
-    public Integer getID() {
-        return this.pairID;
-    }
-
-    public Integer getValue() {
-        return this.pairValue;
-    }
+    public Integer getID() { return pairID; }
+    public Integer getValue() { return pairValue; }
 }

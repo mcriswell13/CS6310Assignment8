@@ -1,25 +1,17 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.lang.Integer
- *  java.lang.Object
- *  java.util.Comparator
- */
 package edu.gatech;
 
-import edu.gatech.SimEvent;
 import java.util.Comparator;
 
-public class SimEventComparator
-implements Comparator<SimEvent> {
+public class SimEventComparator implements Comparator<SimEvent> {
+    @Override
     public int compare(SimEvent x, SimEvent y) {
         if (y == null) {
             return -1;
-        }
-        if (x == null) {
+        } else if (x == null) {
             return 1;
+        } else {
+        	return x.getRank() - y.getRank();
         }
-        return x.getRank() - y.getRank();
     }
+    
 }

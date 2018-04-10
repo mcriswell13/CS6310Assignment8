@@ -1,56 +1,68 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.lang.Integer
- *  java.lang.Object
- *  java.lang.String
- *  java.util.Comparator
- *  java.util.PriorityQueue
- */
 package edu.gatech;
 
-import edu.gatech.SimEvent;
-import edu.gatech.SimEventComparator;
-import edu.gatech.TransportationSystem;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class SimQueue {
     private static PriorityQueue<SimEvent> eventQueue;
-    private Comparator<SimEvent> simComparator = new SimEventComparator();
-    static final Integer passengerFrequency;
-
-    static {
-        passengerFrequency = 3;
-    }
+    private Comparator<SimEvent> simComparator;
+    final static Integer passengerFrequency = 3;
 
     public SimQueue() {
-        eventQueue = new PriorityQueue(100, this.simComparator);
+        simComparator = new SimEventComparator();
+        eventQueue = new PriorityQueue<SimEvent>(100, simComparator);
     }
 
-    /*
-     * Exception decompiling
-     */
-    public void triggerNextEvent(TransportationSystem transportationModel) {
-        // This method has failed to decompile.  When submitting a bug report, please provide this stack trace, and (if you hold appropriate legal rights) the relevant class file.
-        // org.benf.cfr.reader.util.CannotPerformDecode: reachable test BLOCK was exited and re-entered.
-        // org.benf.cfr.reader.bytecode.analysis.opgraph.op3rewriters.Misc.getFarthestReachableInRange(Misc.java:143)
-        // org.benf.cfr.reader.bytecode.analysis.opgraph.op3rewriters.SwitchReplacer.examineSwitchContiguity(SwitchReplacer.java:385)
-        // org.benf.cfr.reader.bytecode.analysis.opgraph.op3rewriters.SwitchReplacer.replaceRawSwitches(SwitchReplacer.java:65)
-        // org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysisInner(CodeAnalyser.java:394)
-        // org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysisOrWrapFail(CodeAnalyser.java:191)
-        // org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysis(CodeAnalyser.java:136)
-        // org.benf.cfr.reader.entities.attributes.AttributeCode.analyse(AttributeCode.java:95)
-        // org.benf.cfr.reader.entities.Method.analyse(Method.java:369)
-        // org.benf.cfr.reader.entities.ClassFile.analyseMid(ClassFile.java:770)
-        // org.benf.cfr.reader.entities.ClassFile.analyseTop(ClassFile.java:702)
-        // org.benf.cfr.reader.Main.doClass(Main.java:46)
-        // org.benf.cfr.reader.Main.main(Main.java:191)
-        throw new IllegalStateException("Decompilation failed");
+    public void triggerNextEvent(TransportationSystem busModel) {
+        if (eventQueue.size() > 0) {
+            SimEvent activeEvent = eventQueue.poll();
+            activeEvent.displayEvent();
+            switch (activeEvent.getType()) {
+                case "move_bus":
+                    // identify the bus that will move
+                    Bus activeBus = busModel.getBus(activeEvent.getID());
+                    System.out.println(" the bus being observed is: " + Integer.toString(activeBus.getID()));
+
+                    // identify the current stop
+                    Route activeRoute = busModel.getRoute(activeBus.getRouteID());
+                    System.out.println(" the bus is driving on route: " + Integer.toString(activeRoute.getID()));
+
+                    int activeLocation = activeBus.getLocation();
+                    int activeStopID = activeRoute.getStopID(activeLocation);
+                    Stop activeStop = busModel.getStop(activeStopID);
+                    System.out.println(" the bus is currently at stop: " + Integer.toString(activeStop.getID()) + " - " + activeStop.getName());
+
+                    // drop off and pickup new passengers at current stop
+                    int currentPassengers = activeBus.getRiders().size();
+                    int passengerDifferential = activeStop.exchangeRiders(activeEvent.getRank(), currentPassengers, activeBus.getCapacity());
+                    System.out.println(" passengers pre-stop: " + Integer.toString(currentPassengers) + " post-stop: " + (currentPassengers + passengerDifferential));
+                    activeBus.adjustPassengers(passengerDifferential);
+
+                    // determine next stop
+                    int nextLocation = activeRoute.getNextLocation(activeLocation);
+                    int nextStopID = activeRoute.getStopID(nextLocation);
+                    Stop nextStop = busModel.getStop(nextStopID);
+                    System.out.println(" the bus is heading to stop: " + Integer.toString(nextStopID) + " - " + nextStop.getName() + "\n");
+
+                    // find distance to stop to determine next event time
+                    Double travelDistance = activeStop.findDistance(nextStop);
+                    // conversion is used to translate time calculation from hours to minutes
+                    int travelTime = 1 + (travelDistance.intValue() * 60 / activeBus.getSpeed());
+                    activeBus.setLocation(nextLocation);
+
+                    // generate next event for this bus
+                    eventQueue.add(new SimEvent(activeEvent.getRank() + travelTime, "move_bus", activeEvent.getID()));
+                    break;
+                default:
+                    System.out.println(" event not recognized");
+                    break;
+            }
+        } else {
+            System.out.println(" event queue empty");
+        }
     }
 
     public void addNewEvent(Integer eventRank, String eventType, Integer eventID) {
-        eventQueue.add((Object)new SimEvent(eventRank, eventType, eventID));
+        eventQueue.add(new SimEvent(eventRank, eventType, eventID));
     }
 }

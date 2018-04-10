@@ -1,19 +1,6 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.io.PrintStream
- *  java.lang.Integer
- *  java.lang.String
- *  java.lang.System
- *  java.util.ArrayList
- */
 package edu.gatech;
 
-import edu.gatech.Rider;
 import edu.gatech.TransportationVehicle;
-import java.io.PrintStream;
-import java.util.ArrayList;
 
 public class Rail
 extends TransportationVehicle {
@@ -43,3 +30,4 @@ extends TransportationVehicle {
         this.axisDirection = directionalType;
     }
 }
+

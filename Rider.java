@@ -1,10 +1,3 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.lang.Integer
- *  java.lang.Object
- */
 package edu.gatech;
 
 public class Rider {

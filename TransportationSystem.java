@@ -1,53 +1,16 @@
-/*
- * Decompiled with CFR 0_125.
- * 
- * Could not load the following classes:
- *  java.io.BufferedWriter
- *  java.io.File
- *  java.io.FileWriter
- *  java.io.PrintStream
- *  java.io.Writer
- *  java.lang.Double
- *  java.lang.Exception
- *  java.lang.Integer
- *  java.lang.Object
- *  java.lang.String
- *  java.lang.System
- *  java.util.ArrayList
- *  java.util.Collection
- *  java.util.Collections
- *  java.util.Comparator
- *  java.util.HashMap
- *  java.util.List
- *  java.util.PriorityQueue
- */
 package edu.gatech;
 
-import edu.gatech.Bus;
-import edu.gatech.MiniPair;
-import edu.gatech.MiniPairComparator;
-import edu.gatech.Rail;
-import edu.gatech.Rider;
-import edu.gatech.Road;
-import edu.gatech.Route;
-import edu.gatech.Stop;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.PriorityQueue;
 
 public class TransportationSystem {
-    private HashMap<Integer, Stop> stops = new HashMap();
-    private HashMap<Integer, Route> routes = new HashMap();
-    private HashMap<Integer, Bus> buses = new HashMap();
+    private HashMap<Integer, Stop> stops = new HashMap<Integer, Stop>();
+    private HashMap<Integer, Route> routes = new HashMap<Integer, Route>();
+    private HashMap<Integer, Bus> buses = new HashMap<Integer, Bus>();
     private HashMap<Integer, Rail> rails;
 
     public Stop getStop(int stopID) {
@@ -95,22 +58,22 @@ public class TransportationSystem {
 
     public int makeRail(int uniqueID, int inputRoute, int inputLocation, int inputPassengers, int inputCapacity, int inputSpeed, String axisDirection) {
         Rail rail = new Rail(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed, axisDirection);
-        this.rails.put((Object)uniqueID, (Object)rail);
+        this.rails.put(uniqueID, rail);
         return uniqueID;
     }
 
     public int makeStop(int uniqueID, String inputName, String address) {
-        this.stops.put((Object)uniqueID, (Object)new Stop(uniqueID, inputName, address));
+        this.stops.put(uniqueID, new Stop(uniqueID, inputName, address));
         return uniqueID;
     }
 
     public int makeRoute(int uniqueID, int inputNumber, String inputName, String routeType) {
-        this.routes.put((Object)uniqueID, (Object)new Route(uniqueID, inputNumber, inputName, routeType));
+        this.routes.put(uniqueID, new Route(uniqueID, inputNumber, inputName, routeType));
         return uniqueID;
     }
 
     public int makeBus(int uniqueID, int inputRoute, int inputLocation, int inputCapacity, int inputSpeed) {
-        this.buses.put((Object)uniqueID, (Object)new Bus(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed));
+        this.buses.put(uniqueID, new Bus(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed));
         return uniqueID;
     }
 
@@ -133,63 +96,66 @@ public class TransportationSystem {
     public HashMap<Integer, Rail> getRails() {
         return this.rails;
     }
-
+    
     public void displayModel() {
-        MiniPairComparator compareEngine = new MiniPairComparator();
-        int[] colorScale = new int[]{9, 29, 69, 89, 101};
-        String[] colorName = new String[]{"#000077", "#0000FF", "#000000", "#770000", "#FF0000"};
-        try {
-            String path = "./mts_digraph.dot";
+    	ArrayList<MiniPair> busNodes, stopNodes;
+    	MiniPairComparator compareEngine = new MiniPairComparator();
+    	
+    	int[] colorScale = new int[] {9, 29, 69, 89, 101};
+    	String[] colorName = new String[] {"#000077", "#0000FF", "#000000", "#770000", "#FF0000"};
+    	Integer colorSelector, colorCount, colorTotal;
+    	
+    	try{
+            // create new file access path
+            String path="./mts_digraph.dot";
             File file = new File(path);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+
+            // create the file if it doesn't exist
+            if (!file.exists()) { file.createNewFile();}
+
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter((Writer)fw);
+            BufferedWriter bw = new BufferedWriter(fw);
+            
             bw.write("digraph G\n");
             bw.write("{\n");
-            ArrayList busNodes = new ArrayList();
-            Collections.sort((List)busNodes, (Comparator)compareEngine);
-            Integer colorSelector = 0;
-            Integer colorCount = 0;
-            Integer colorTotal = busNodes.size();
-            for (MiniPair c : busNodes) {
-                Integer n = colorCount;
-                colorCount = n + 1;
-                if ((int)((double)n.intValue() * 100.0 / (double)colorTotal.intValue()) > colorScale[colorSelector]) {
-                    colorSelector = colorSelector + 1;
-                }
-                bw.write("  bus" + (Object)c.getID() + " [ label=\"bus#" + (Object)c.getID() + " | " + (Object)c.getValue() + " riding\", color=\"" + colorName[colorSelector] + "\"];\n");
-            }
-            bw.newLine();
-            ArrayList stopNodes = new ArrayList();
-            for (Stop s : this.stops.values()) {
-                stopNodes.add((Object)new MiniPair(s.getID(), s.getRiders().size()));
-            }
-            Collections.sort((List)stopNodes, (Comparator)compareEngine);
+    	
+            busNodes = new ArrayList<MiniPair>();
+            for (Bus b: buses.values()) { busNodes.add(new MiniPair(b.getID(), b.getRiders().size())); }
+            Collections.sort(busNodes, compareEngine);
+
             colorSelector = 0;
             colorCount = 0;
-            colorTotal = stopNodes.size();
-            for (MiniPair t : stopNodes) {
-                Integer n = colorCount;
-                colorCount = n + 1;
-                if ((int)((double)n.intValue() * 100.0 / (double)colorTotal.intValue()) > colorScale[colorSelector]) {
-                    colorSelector = colorSelector + 1;
-                }
-                bw.write("  stop" + (Object)t.getID() + " [ label=\"stop#" + (Object)t.getID() + " | " + (Object)t.getValue() + " waiting\", color=\"" + colorName[colorSelector] + "\"];\n");
+            colorTotal = busNodes.size();
+            for (MiniPair c: busNodes) {
+            	if (((int) (colorCount++ * 100.0 / colorTotal)) > colorScale[colorSelector]) { colorSelector++; }
+            	bw.write("  bus" + c.getID() + " [ label=\"bus#" + c.getID() + " | " + c.getValue() + " riding\", color=\"" + colorName[colorSelector] + "\"];\n");
             }
             bw.newLine();
-            for (Bus m : this.buses.values()) {
-                Integer prevStop = ((Route)this.routes.get((Object)m.getRouteID())).getStopID(m.getPastLocation());
-                Integer nextStop = ((Route)this.routes.get((Object)m.getRouteID())).getStopID(m.getLocation());
-                bw.write("  stop" + Integer.toString((int)prevStop) + " -> bus" + Integer.toString((int)m.getID()) + " [ label=\" dep\" ];\n");
-                bw.write("  bus" + Integer.toString((int)m.getID()) + " -> stop" + Integer.toString((int)nextStop) + " [ label=\" arr\" ];\n");
+            
+            stopNodes = new ArrayList<MiniPair>();
+            for (Stop s: stops.values()) { stopNodes.add(new MiniPair(s.getID(), s.getRiders().size())); }
+            Collections.sort(stopNodes, compareEngine);
+
+            colorSelector = 0;
+            colorCount = 0;
+            colorTotal = stopNodes.size();    	
+            for (MiniPair t: stopNodes) {
+            	if (((int) (colorCount++ * 100.0 / colorTotal)) > colorScale[colorSelector]) { colorSelector++; }
+            	bw.write("  stop" + t.getID() + " [ label=\"stop#" + t.getID() + " | " + t.getValue() + " waiting\", color=\"" + colorName[colorSelector] + "\"];\n");
             }
+            bw.newLine();
+            
+            for (Bus m: buses.values()) {
+            	Integer prevStop = routes.get(m.getRouteID()).getStopID(m.getPastLocation());
+            	Integer nextStop = routes.get(m.getRouteID()).getStopID(m.getLocation());
+            	bw.write("  stop" + Integer.toString(prevStop) + " -> bus" + Integer.toString(m.getID()) + " [ label=\" dep\" ];\n");
+            	bw.write("  bus" + Integer.toString(m.getID()) + " -> stop" + Integer.toString(nextStop) + " [ label=\" arr\" ];\n");
+            }
+    	
             bw.write("}\n");
             bw.close();
-        }
-        catch (Exception e) {
-            System.out.println((Object)e);
-        }
+    	} catch (Exception e) {
+    		System.out.println(e);
+    	}
     }
 }
