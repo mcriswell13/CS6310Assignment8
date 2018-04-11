@@ -35,16 +35,24 @@ public class SimDriver {
                     System.out.println(" type: " + tokens[2] + " ID: " + Integer.parseInt(tokens[3]) + " created");
                     break;
                 case "add_stop":
-                    int stopID = martaModel.makeStop(Integer.parseInt(tokens[1]), tokens[2], Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]), Double.parseDouble(tokens[5]));
+                    int stopID = martaModel.makeStop(Integer.parseInt(tokens[1]), tokens[2], tokens[3]);
                     System.out.println(" new stop: " + Integer.toString(stopID) + " created");
                     break;
                 case "add_route":
-                    int routeID = martaModel.makeRoute(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), tokens[3]);
+                    int routeID = martaModel.makeRoute(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), tokens[3], tokens[4]);
                     System.out.println(" new route: " + Integer.toString(routeID) + " created");
                     break;
                 case "add_bus":
-                    int busID = martaModel.makeBus(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]));
+                    int busID = martaModel.makeBus(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]));
                     System.out.println(" new bus: " + Integer.toString(busID) + " created");
+                    break;
+                case "add_rail":
+                    int railID = martaModel.makeRail(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]), tokens[7]);
+                    System.out.println(" new bus: " + Integer.toString(railID) + " created");
+                    break;
+                case "add_rider":
+                    int riderID = martaModel.makeRider(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
+                    System.out.println(" new bus: " + Integer.toString(riderID) + " created");
                     break;
                 case "extend_route":
                     martaModel.appendStopToRoute(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
@@ -137,7 +145,7 @@ public class SimDriver {
                 latitude = rs.getDouble("latitude");
                 longitude = rs.getDouble("longitude");
 
-                martaModel.makeStop(stopID,stopName,0,latitude,longitude);
+                //martaModel.makeStop(stopID,stopName,0);
                 recordCounter++;
             }
             System.out.println(Integer.toString(recordCounter) + " added");
@@ -150,7 +158,7 @@ public class SimDriver {
                 routeID = rs.getInt("route");
                 routeName = rs.getString("route_name");
 
-                martaModel.makeRoute(routeID, routeID, routeName);
+                //martaModel.makeRoute(routeID, routeID, routeName);
                 recordCounter++;
 
                 // initialize the list of stops for the route as needed
@@ -205,7 +213,7 @@ public class SimDriver {
                 int startingPosition = 0;
                 int skip = Math.max(1, routeLength / busesOnRoute);
                 for (int i = 0; i < busesOnRoute; i++) {
-                    martaModel.makeBus(busID, routeID, startingPosition + i * skip, 0, 10, 1);
+                    //martaModel.makeBus(busID, routeID, startingPosition + i * skip, 0, 10, 1);
                     simEngine.addNewEvent(0,"move_bus", busID++);
                     recordCounter++;
                 }
@@ -226,7 +234,7 @@ public class SimDriver {
                 int avgOffs = rs.getInt("avg_offs");
                 int maxOffs = rs.getInt("max_offs");
 
-                martaModel.getStop(stopID).addArrivalInfo(timeSlot, minOns, avgOns, maxOns, minOffs, avgOffs, maxOffs);
+                //martaModel.getStop(stopID).addArrivalInfo(timeSlot, minOns, avgOns, maxOns, minOffs, avgOffs, maxOffs);
                 recordCounter++;
             }
             System.out.println(Integer.toString(recordCounter) + " added");
