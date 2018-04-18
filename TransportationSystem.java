@@ -14,29 +14,29 @@ public class TransportationSystem {
     private HashMap<Integer, Rail> rails;
 
     public Stop getStop(int stopID) {
-        if (this.stops.containsKey((Object)stopID)) {
-            return (Stop)this.stops.get((Object)stopID);
+        if (this.stops.containsKey(stopID)) {
+            return this.stops.get(stopID);
         }
         return null;
     }
 
     public Rail getRail(int railID) {
-        if (this.rails.containsKey((Object)railID)) {
-            return (Rail)this.rails.get((Object)railID);
+        if (this.rails.containsKey(railID)) {
+            return this.rails.get(railID);
         }
         return null;
     }
 
     public Route getRoute(int routeID) {
-        if (this.routes.containsKey((Object)routeID)) {
-            return (Route)this.routes.get((Object)routeID);
+        if (this.routes.containsKey(routeID)) {
+            return this.routes.get(routeID);
         }
         return null;
     }
 
     public Bus getBus(int busID) {
-        if (this.buses.containsKey((Object)busID)) {
-            return (Bus)this.buses.get((Object)busID);
+        if (this.buses.containsKey(busID)) {
+            return this.buses.get(busID);
         }
         return null;
     }
@@ -78,7 +78,7 @@ public class TransportationSystem {
     }
 
     public void appendStopToRoute(int routeID, int nextStopID) {
-        ((Route)this.routes.get((Object)routeID)).addNewStop(nextStopID);
+        (this.routes.get(routeID)).addNewStop(nextStopID);
     }
 
     public HashMap<Integer, Stop> getStops() {
