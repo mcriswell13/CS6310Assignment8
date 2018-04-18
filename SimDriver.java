@@ -42,13 +42,17 @@ public class SimDriver {
                     int routeID = martaModel.makeRoute(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), tokens[3], tokens[4]);
                     System.out.println(" new route: " + Integer.toString(routeID) + " created");
                     break;
+                case "add_road_between_stops":
+                    int roadBetweenStopID = martaModel.makeRoadBetweenStop(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]), Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]));
+                    System.out.println(" new road between stops: " + Integer.toString(roadBetweenStopID) + " created");
+                    break;
                 case "add_bus":
                     int busID = martaModel.makeBus(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]));
                     System.out.println(" new bus: " + Integer.toString(busID) + " created");
                     break;
                 case "add_rail":
                     int railID = martaModel.makeRail(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]), Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]), tokens[7]);
-                    System.out.println(" new bus: " + Integer.toString(railID) + " created");
+                    System.out.println(" new rail: " + Integer.toString(railID) + " created");
                     break;
                 case "add_rider":
                     int riderID = martaModel.makeRider(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
@@ -62,7 +66,12 @@ public class SimDriver {
                     uploadMARTAData();
                     break;
                 case "step_once":
-                    simEngine.triggerNextEvent(martaModel);
+				try {
+					simEngine.triggerNextEvent(martaModel);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					System.out.println(e1.getMessage());
+				}
                     System.out.println(" queue activated for 1 event");
                     break;
                 case "step_multi":
@@ -74,7 +83,12 @@ public class SimDriver {
                     	}
                     	
                     	// execute the next event
-                    	simEngine.triggerNextEvent(martaModel);
+                    	try {
+							simEngine.triggerNextEvent(martaModel);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							System.out.println(e1.getMessage());
+						}
                     	
                     	// pause after each event for a given number of seconds
                     	if (tokens.length >= 4) {

@@ -14,7 +14,7 @@ public class SimQueue {
         eventQueue = new PriorityQueue<SimEvent>(100, simComparator);
     }
 
-    public void triggerNextEvent(TransportationSystem busModel) {
+    public void triggerNextEvent(TransportationSystem busModel) throws Exception {
         if (eventQueue.size() > 0) {
             SimEvent activeEvent = eventQueue.poll();
             activeEvent.displayEvent();
@@ -45,27 +45,35 @@ public class SimQueue {
                     	}
                     }
                     
-                    for(Rider rider : riderList) {
+                    for(Rider rider : riderList) 
+                    {
                     	activeBus.addRiderToVehicle(rider);
-                    }
-                    
-                    
-
+                    }                                   
                     // determine next stop
                     int nextLocation = activeRoute.getNextLocation(activeLocation);
                     int nextStopID = activeRoute.getStopID(nextLocation);
+                    double hours = 0.0;
+                    double distance = 0.0;
+                    int roadCount = 0;
+                    for (Road road : activeRoute.getRoadsBetweenStops()) {
+                    	if(road.getDestinationStopID() == nextStopID && road.getCurrentStopID() == activeStopID) {
+                    		roadCount++;
+                    		hours = hours + ((road.getTrafficVolume()/100)*(road.getLength()/activeBus.getSpeed()));
+                    		distance = distance + road.getLength();
+                    	}
+                    }
+                    if(roadCount == 0) {
+                    	throw new Exception("There should be at least one road in between these 2 stops.");
+                    }
                     Stop nextStop = busModel.getStop(nextStopID);
                     System.out.println(" the bus is heading to stop: " + Integer.toString(nextStopID) + " - " + nextStop.getName() + "\n");
 
                     // find distance to stop to determine next event time
-                    //*****Need to determine how to calculate distance using roads
-                    Double travelDistance = activeStop.findDistance(nextStop);
                     // conversion is used to translate time calculation from hours to minutes
-                    int travelTime = 1 + (travelDistance.intValue() * 60 / activeBus.getSpeed());
                     activeBus.setLocation(nextLocation);
 
                     // generate next event for this bus
-                    eventQueue.add(new SimEvent(activeEvent.getRank() + travelTime, "move_bus", activeEvent.getID()));
+                    eventQueue.add(new SimEvent(activeEvent.getRank() + (int)hours, "move_bus", activeEvent.getID()));
                     break;
                 case "move_rail":
                     // identify the bus that will move
