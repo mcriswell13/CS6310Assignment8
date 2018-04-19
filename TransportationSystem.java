@@ -11,7 +11,7 @@ public class TransportationSystem {
     private HashMap<Integer, Stop> stops = new HashMap<Integer, Stop>();
     private HashMap<Integer, Route> routes = new HashMap<Integer, Route>();
     private HashMap<Integer, Bus> buses = new HashMap<Integer, Bus>();
-    private HashMap<Integer, Rail> rails;
+    private HashMap<Integer, Rail> rails = new HashMap<Integer, Rail>();
 
     public Stop getStop(int stopID) {
         if (this.stops.containsKey(stopID)) {
@@ -41,18 +41,18 @@ public class TransportationSystem {
         return null;
     }
 
-    public int makeRoadBetweenStop(int uniqueID, int maximumSpeedAllowed, int trafficVolume, Double length, int currentStopID, int destinationStopID) {
+    public int makeRoadBetweenStop(int routeID, int maximumSpeedAllowed, int trafficVolume, Double length, int currentStopID, int destinationStopID) {
         Road road = new Road(maximumSpeedAllowed, trafficVolume, length, currentStopID, destinationStopID);
-        Route route = this.getRoute(uniqueID);
+        Route route = this.getRoute(routeID);
         route.addNewRoadBetweenStop(road);
-        return uniqueID;
+        return routeID;
     }
 
     public int makeRider(int uniqueID, int currentBusStopID, int destinationBusStopID) {
         Rider rider = new Rider(uniqueID, currentBusStopID, destinationBusStopID);
         Stop busStop = this.getStop(currentBusStopID);
-        busStop.addRiderToStop(rider);
         System.out.println(" Rider: " + uniqueID + " is on stop: " + busStop.getID().toString());
+        busStop.addRiderToStop(rider);
         return uniqueID;
     }
 
@@ -62,8 +62,8 @@ public class TransportationSystem {
         return uniqueID;
     }
 
-    public int makeStop(int uniqueID, String inputName, String address) {
-        this.stops.put(uniqueID, new Stop(uniqueID, inputName, address));
+    public int makeStop(int uniqueID, String inputName) {
+        this.stops.put(uniqueID, new Stop(uniqueID, inputName));
         return uniqueID;
     }
 

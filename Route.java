@@ -122,8 +122,8 @@ public class Route {
         return this.roadsBetweenStops;
     }
 
-    public void setRoadsBetweenStops(ArrayList<Road> roadsBetweenStops) {
-        this.roadsBetweenStops = roadsBetweenStops;
+    public void setRoadsBetweenStops(ArrayList<Road> roadBetweenStops) {
+        this.roadsBetweenStops = roadBetweenStops;
     }
 
     public String getRouteType() {

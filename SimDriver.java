@@ -35,7 +35,7 @@ public class SimDriver {
                     System.out.println(" type: " + tokens[2] + " ID: " + Integer.parseInt(tokens[3]) + " created");
                     break;
                 case "add_stop":
-                    int stopID = martaModel.makeStop(Integer.parseInt(tokens[1]), tokens[2], tokens[3]);
+                    int stopID = martaModel.makeStop(Integer.parseInt(tokens[1]), tokens[2]);
                     System.out.println(" new stop: " + Integer.toString(stopID) + " created");
                     break;
                 case "add_bus_route":
@@ -60,7 +60,7 @@ public class SimDriver {
                     break;
                 case "add_rider":
                     int riderID = martaModel.makeRider(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
-                    System.out.println(" new bus: " + Integer.toString(riderID) + " created");
+                    System.out.println(" new rider: " + Integer.toString(riderID) + " created");
                     break;
                 case "extend_route":
                     martaModel.appendStopToRoute(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));

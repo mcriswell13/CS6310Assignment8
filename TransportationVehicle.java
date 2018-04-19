@@ -1,7 +1,6 @@
 package edu.gatech;
 
 import edu.gatech.Rider;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class TransportationVehicle {
@@ -33,6 +32,7 @@ public class TransportationVehicle {
         this.prevLocation = inputLocation;
         this.capacity = inputCapacity;
         this.speed = inputSpeed;
+        this.riders = new ArrayList<Rider>();
     }
 
     public void setRoute(int inputRoute) {
@@ -44,12 +44,12 @@ public class TransportationVehicle {
         this.nextLocation = inputLocation;
     }
 
-    public void addRiderToBus(Rider busRider) {
-        this.riders.add((Object)busRider);
+    public void addRiderToVehicle(Rider busRider) {
+        this.riders.add(busRider);
     }
 
     public void removeRiderFromBus(Rider busRider) {
-        this.riders.remove((Object)busRider);
+        this.riders.remove(this.riders.indexOf(busRider));
     }
 
     public void setCapacity(int inputCapacity) {

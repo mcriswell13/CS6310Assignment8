@@ -2,6 +2,7 @@ package edu.gatech;
 
 import edu.gatech.Rider;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class Stop {
@@ -19,7 +20,9 @@ public class Stop {
         this.ridersOnStop = new PriorityQueue<Rider>();
     }
 
-    public Stop(int uniqueValue, String inputName, String address) {
+    public Stop(int uniqueValue, String inputName) {
+    	Comparator<Rider> comparator = new RiderComparator();
+    	this.ridersOnStop = new PriorityQueue<Rider>(100, comparator);
         this.ID = uniqueValue;
         this.stopName = inputName;
     }
@@ -59,15 +62,19 @@ public class Stop {
     public ArrayList<Rider> exchangeRiders(int initialPassengerCount, int capacity) {
         ArrayList<Rider> riderList = new ArrayList<Rider>();
         int riderCount = this.ridersOnStop.size();
+        System.out.println("exchangeRiders, riders on this stop size: " + riderCount);
         int ableToBoard = capacity - initialPassengerCount;
+        System.out.println("exchangeRiders, able to board bus: " + ableToBoard);
         int i = 0;
         while (i < riderCount) {
-            if (riderCount > ableToBoard) {
-                riderList.add(this.ridersOnStop.poll());
+           Rider polledRider = this.ridersOnStop.poll();
+           System.out.println(polledRider.getID());
+           riderList.add(polledRider);
+           if (riderCount > ableToBoard) {
                 System.out.println("Capacity has been reached for this bus. Rider(s) must wait for next bus.");
                 break;
             }
-            ++i;
+           ++i;
         }
         return riderList;
     }
@@ -89,4 +96,27 @@ public class Stop {
         }
         return result;
     }
+ // StringLengthComparator.java
+
+    public class RiderComparator implements Comparator<Rider>
+    {
+        @Override
+        public int compare(Rider x, Rider y)
+        {
+            // Assume neither string is null. Real code should
+            // probably be more robust
+            // You could also just return x.length() - y.length(),
+            // which would be more efficient.
+            if (x.getID() < y.getID())
+            {
+                return -1;
+            }
+            if (x.getID() > y.getID())
+            {
+                return 1;
+            }
+            return 0;
+        }
+    }
+    
 }
