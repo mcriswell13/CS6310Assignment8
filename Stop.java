@@ -2,13 +2,12 @@ package edu.gatech;
 
 import edu.gatech.Rider;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 
 public class Stop {
     private Integer ID;
     private String stopName;
-    private PriorityQueue<Rider> ridersOnStop;
+    private LinkedList<Rider> ridersOnStop;
 
     public Stop() {
         this.ID = -1;
@@ -17,12 +16,11 @@ public class Stop {
     public Stop(int uniqueValue) {
         this.ID = uniqueValue;
         this.stopName = "";
-        this.ridersOnStop = new PriorityQueue<Rider>();
+        this.ridersOnStop = new LinkedList<Rider>();
     }
 
     public Stop(int uniqueValue, String inputName) {
-    	Comparator<Rider> comparator = new RiderComparator();
-    	this.ridersOnStop = new PriorityQueue<Rider>(100, comparator);
+    	this.ridersOnStop = new LinkedList<Rider>();
         this.ID = uniqueValue;
         this.stopName = inputName;
     }
@@ -31,7 +29,7 @@ public class Stop {
         this.stopName = inputName;
     }
 
-    public PriorityQueue<Rider> getRiders() {
+    public LinkedList<Rider> getRiders() {
         return this.ridersOnStop;
     }
 
@@ -44,7 +42,7 @@ public class Stop {
     }
 
     public void displayEvent() {
-        System.out.println(" bus stop: " + Integer.toString((int)this.ID));
+        System.out.println(" bus stop: " + Integer.toString(this.ID));
     }
 
     public void takeTurn() {
@@ -68,7 +66,6 @@ public class Stop {
         int i = 0;
         while (i < riderCount) {
            Rider polledRider = this.ridersOnStop.poll();
-           System.out.println(polledRider.getID());
            riderList.add(polledRider);
            if (riderCount > ableToBoard) {
                 System.out.println("Capacity has been reached for this bus. Rider(s) must wait for next bus.");
@@ -80,8 +77,8 @@ public class Stop {
     }
 
     public void displayInternalStatus() {
-        System.out.print("> stop - ID: " + Integer.toString((int)this.ID));
-        System.out.print(" name: " + this.stopName + " waiting: " + Integer.toString((int)this.ridersOnStop.size()));
+        System.out.print("> stop - ID: " + Integer.toString(this.ID));
+        System.out.print(" name: " + this.stopName + " waiting: " + Integer.toString(this.ridersOnStop.size()));
     }
 
     public boolean equals(Object object) {
@@ -95,28 +92,6 @@ public class Stop {
             }
         }
         return result;
-    }
- // StringLengthComparator.java
-
-    public class RiderComparator implements Comparator<Rider>
-    {
-        @Override
-        public int compare(Rider x, Rider y)
-        {
-            // Assume neither string is null. Real code should
-            // probably be more robust
-            // You could also just return x.length() - y.length(),
-            // which would be more efficient.
-            if (x.getID() < y.getID())
-            {
-                return -1;
-            }
-            if (x.getID() > y.getID())
-            {
-                return 1;
-            }
-            return 0;
-        }
     }
     
 }

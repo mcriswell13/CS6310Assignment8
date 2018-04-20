@@ -10,8 +10,8 @@ import java.io.FileWriter;
 public class TransportationSystem {
     private HashMap<Integer, Stop> stops = new HashMap<Integer, Stop>();
     private HashMap<Integer, Route> routes = new HashMap<Integer, Route>();
-    private HashMap<Integer, Bus> buses = new HashMap<Integer, Bus>();
-    private HashMap<Integer, Rail> rails = new HashMap<Integer, Rail>();
+    private HashMap<Integer, TransportationVehicle> vehicles = new HashMap<Integer, TransportationVehicle>();
+    //private HashMap<Integer, Rail> rails = new HashMap<Integer, Rail>();
 
     public Stop getStop(int stopID) {
         if (this.stops.containsKey(stopID)) {
@@ -20,12 +20,12 @@ public class TransportationSystem {
         return null;
     }
 
-    public Rail getRail(int railID) {
-        if (this.rails.containsKey(railID)) {
-            return this.rails.get(railID);
-        }
-        return null;
-    }
+    //public Rail getRail(int railID) {
+        //if (this.rails.containsKey(railID)) {
+        //    return this.rails.get(railID);
+       // }
+       // return null;
+    //}
 
     public Route getRoute(int routeID) {
         if (this.routes.containsKey(routeID)) {
@@ -34,9 +34,9 @@ public class TransportationSystem {
         return null;
     }
 
-    public Bus getBus(int busID) {
-        if (this.buses.containsKey(busID)) {
-            return this.buses.get(busID);
+    public TransportationVehicle getVehicle(int vehicleID) {
+        if (this.vehicles.containsKey(vehicleID)) {
+            return this.vehicles.get(vehicleID);
         }
         return null;
     }
@@ -48,19 +48,18 @@ public class TransportationSystem {
         return routeID;
     }
 
-    public int makeRider(int uniqueID, int currentBusStopID, int destinationBusStopID) {
-        Rider rider = new Rider(uniqueID, currentBusStopID, destinationBusStopID);
+    public void makeRider(int currentBusStopID, int destinationBusStopID) {
+        Rider rider = new Rider(currentBusStopID, destinationBusStopID);
         Stop busStop = this.getStop(currentBusStopID);
-        System.out.println(" Rider: " + uniqueID + " is on stop: " + busStop.getID().toString());
+        System.out.println(" Rider is on stop: " + busStop.getID().toString());
         busStop.addRiderToStop(rider);
-        return uniqueID;
     }
 
-    public int makeRail(int uniqueID, int inputRoute, int inputLocation, int inputPassengers, int inputCapacity, int inputSpeed, String axisDirection) {
-        Rail rail = new Rail(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed, axisDirection);
-        this.rails.put(uniqueID, rail);
-        return uniqueID;
-    }
+    //public int makeRail(int uniqueID, int inputRoute, int inputLocation, int inputPassengers, int inputCapacity, int inputSpeed, String axisDirection) {
+      //  Rail rail = new Rail(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed, axisDirection);
+       // this.rails.put(uniqueID, rail);
+       // return uniqueID;
+    //}
 
     public int makeStop(int uniqueID, String inputName) {
         this.stops.put(uniqueID, new Stop(uniqueID, inputName));
@@ -71,9 +70,12 @@ public class TransportationSystem {
         this.routes.put(uniqueID, new Route(uniqueID, inputNumber, inputName, routeType));
         return uniqueID;
     }
-
-    public int makeBus(int uniqueID, int inputRoute, int inputLocation, int inputCapacity, int inputSpeed) {
-        this.buses.put(uniqueID, new Bus(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed));
+    
+    public int makeVehicle(int uniqueID, int inputRoute, int inputLocation, int inputCapacity, int inputSpeed, String vehicleType) throws Exception {
+    	if(this.getRoute(inputRoute).getRouteType() != vehicleType) {
+    		throw new Exception("Cannot put this vehicle on this route type.");
+    	}
+        this.vehicles.put(uniqueID, new TransportationVehicle(uniqueID, inputRoute, inputLocation, inputCapacity, inputSpeed, vehicleType));
         return uniqueID;
     }
 
@@ -89,13 +91,13 @@ public class TransportationSystem {
         return this.routes;
     }
 
-    public HashMap<Integer, Bus> getBuses() {
-        return this.buses;
+    public HashMap<Integer, TransportationVehicle> getVehicles() {
+        return this.vehicles;
     }
 
-    public HashMap<Integer, Rail> getRails() {
-        return this.rails;
-    }
+    //public HashMap<Integer, Rail> getRails() {
+    //    return this.rails;
+    //}
     
     public void displayModel() {
     	ArrayList<MiniPair> busNodes, stopNodes;
@@ -120,7 +122,7 @@ public class TransportationSystem {
             bw.write("{\n");
     	
             busNodes = new ArrayList<MiniPair>();
-            for (Bus b: buses.values()) { busNodes.add(new MiniPair(b.getID(), b.getRiders().size())); }
+            for (TransportationVehicle b: vehicles.values()) { busNodes.add(new MiniPair(b.getID(), b.getRiders().size())); }
             Collections.sort(busNodes, compareEngine);
 
             colorSelector = 0;
@@ -145,7 +147,7 @@ public class TransportationSystem {
             }
             bw.newLine();
             
-            for (Bus m: buses.values()) {
+            for (TransportationVehicle m: vehicles.values()) {
             	Integer prevStop = routes.get(m.getRouteID()).getStopID(m.getPastLocation());
             	Integer nextStop = routes.get(m.getRouteID()).getStopID(m.getLocation());
             	bw.write("  stop" + Integer.toString(prevStop) + " -> bus" + Integer.toString(m.getID()) + " [ label=\" dep\" ];\n");

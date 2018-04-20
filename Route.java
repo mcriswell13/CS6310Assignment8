@@ -70,7 +70,7 @@ public class Route {
     }
 
     public void displayEvent() {
-        System.out.println(" bus route: " + Integer.toString((int)this.ID));
+        System.out.println(" bus route: " + Integer.toString(this.ID));
     }
 
     public void takeTurn() {
@@ -86,7 +86,7 @@ public class Route {
     }
 
     public Integer getStopID(int routeLocation) {
-        return (Integer)this.stopsOnRoute.get((Object)routeLocation);
+        return (Integer)this.stopsOnRoute.get(routeLocation);
     }
 
     public Integer getLength() {
@@ -94,12 +94,12 @@ public class Route {
     }
 
     public void displayInternalStatus() {
-        System.out.print("> route - ID: " + Integer.toString((int)this.ID));
-        System.out.print(" number: " + Integer.toString((int)this.routeNumber) + " name: " + this.routeName);
+        System.out.print("> route - ID: " + Integer.toString(this.ID));
+        System.out.print(" number: " + Integer.toString(this.routeNumber) + " name: " + this.routeName);
         System.out.print(" stops: [ ");
         int i = 0;
         while (i < this.stopsOnRoute.size()) {
-            System.out.print(String.valueOf((Object)Integer.toString((int)i)) + ":" + Integer.toString((int)((Integer)this.stopsOnRoute.get((Object)i))) + " ");
+            System.out.print(String.valueOf(Integer.toString(i)) + ":" + Integer.toString((this.stopsOnRoute.get(i))) + " ");
             ++i;
         }
         System.out.println("]");

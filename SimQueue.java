@@ -14,51 +14,57 @@ public class SimQueue {
         eventQueue = new PriorityQueue<SimEvent>(100, simComparator);
     }
 
-    public void triggerNextEvent(TransportationSystem busModel) throws Exception {
+    public void triggerNextEvent(TransportationSystem transModel) throws Exception {
         if (eventQueue.size() > 0) {
             SimEvent activeEvent = eventQueue.poll();
             activeEvent.displayEvent();
             switch (activeEvent.getType()) {
-                case "move_bus":
+                case "move_vehicle":
                     // identify the bus that will move
-                    Bus activeBus = busModel.getBus(activeEvent.getID());
-                    System.out.println(" the bus being observed is: " + Integer.toString(activeBus.getID()));
+                    TransportationVehicle activeVehicle = transModel.getVehicle(activeEvent.getID());
+                    System.out.println(" the vehicle being observed is: " + Integer.toString(activeVehicle.getID()));
 
                     // identify the current stop
-                    Route activeRoute = busModel.getRoute(activeBus.getRouteID());
-                    System.out.println(" the bus is driving on route: " + Integer.toString(activeRoute.getID()));
+                    Route activeRoute = transModel.getRoute(activeVehicle.getRouteID());
+                    if(activeRoute.getRouteType() == "RAIL") {
+                    	System.out.println("THIS IS A RAIL");
+                    }
+                    else if(activeRoute.getRouteType() == "BUS") {
+                    	System.out.println("THIS IS A BUS");
+                    }
+                    System.out.println(" the vehicle is driving on route: " + Integer.toString(activeRoute.getID()));
 
-                    int activeLocation = activeBus.getLocation();
+                    int activeLocation = activeVehicle.getLocation();
                     int activeStopID = activeRoute.getStopID(activeLocation);
-                    Stop activeStop = busModel.getStop(activeStopID);
-                    System.out.println(" the bus is currently at stop: " + Integer.toString(activeStop.getID()) + " - " + activeStop.getName());
+                    Stop activeStop = transModel.getStop(activeStopID);
+                    System.out.println(" the vehicle is currently at stop: " + Integer.toString(activeStop.getID()) + " - " + activeStop.getName());
 
                     // drop off and pickup new passengers at current stop
-                    int currentPassengers = activeBus.getRiders().size();
+                    int currentPassengers = activeVehicle.getRiders().size();
                     
-                    System.out.println(" there are " + currentPassengers + " on the bus");
+                    System.out.println(" there are " + currentPassengers + " on the vehicle");
                     System.out.println(" there are " + activeStop.getRiders().size() + " at the current stop");
 
-                    ArrayList<Rider> riderList = activeStop.exchangeRiders(currentPassengers, activeBus.getCapacity());
+                    ArrayList<Rider> riderList = activeStop.exchangeRiders(currentPassengers, activeVehicle.getCapacity());
                     System.out.println(" passengers pre-stop: " + Integer.toString(currentPassengers));
-                    //Remove riders from bus. They have reached their destination.
-                    ArrayList<Rider> busRiders = new ArrayList<Rider>();
-                    for(Rider rider : activeBus.getRiders()) {
-                    	if(rider.getDestinationBusStop() == activeStopID) {
-                    		busRiders.add(rider);
+
+                    ArrayList<Rider> riders = new ArrayList<Rider>();
+                    for(Rider rider : activeVehicle.getRiders()) {
+                    	if(rider.getDestinationStop() == activeStopID) {
+                    		riders.add(rider);
                     	}
                     }
-                    for(Rider rider : busRiders) {
-                    	System.out.println("Rider " + rider.getID() + " arrived at their destination stop.");
-                    	activeBus.getRiders().remove(rider);
+                    for(Rider rider : riders) {
+                    	System.out.println("Rider arrived at their destination stop.");
+                    	activeVehicle.getRiders().remove(rider);
                     }
                     System.out.println("Rider list size: " + riderList.size());
                     for(Rider rider : riderList) 
                     {
-                    	activeBus.addRiderToVehicle(rider);
+                    	activeVehicle.addRiderToVehicle(rider);
                     }  
                     
-                    System.out.println(" there are " + activeBus.getRiders().size() + " on the bus after pickup");
+                    System.out.println(" there are " + activeVehicle.getRiders().size() + " on the vehicle after pickup");
                     
                     // determine next stop
                     int nextLocation = activeRoute.getNextLocation(activeLocation);
@@ -70,70 +76,30 @@ public class SimQueue {
                     for (Road road : activeRoute.getRoadsBetweenStops()) {
                     	if(road.getDestinationStopID() == nextStopID && road.getCurrentStopID() == activeStopID) {
                     		roadCount++;
-                    		hours = hours + ((double)(road.getTrafficVolume()/100.0)*(road.getLength()/(double)activeBus.getSpeed()));
+                    		if(activeRoute.getRouteType() == "BUS") {
+                    			double speedUsed = Math.max(activeVehicle.getSpeed(), road.getMaximumSpeedAllowed());
+                    			hours = hours + ((double)(road.getTrafficVolume()/100.0)*(road.getLength()/speedUsed));
+                    		}
+                    		else if (activeRoute.getRouteType() == "RAIL") {
+                    			hours = hours + (road.getLength()/(double)activeVehicle.getSpeed());
+                    		}
                     		distance = distance + road.getLength();
                     	}
                     }
+                    System.out.println(" distance traveled: " + distance);
+                    System.out.println(" time traveled: " + hours + " hours");
                     if(roadCount == 0) {
                     	throw new Exception("There should be at least one road in between these 2 stops.");
                     }
-                    System.out.println(" distance traveled: " + distance);
-                    System.out.println(" time traveled: " + hours + " hours");
-                    Stop nextStop = busModel.getStop(nextStopID);
-                    System.out.println(" the bus is heading to stop: " + Integer.toString(nextStopID) + " - " + nextStop.getName() + "\n");
+                    Stop nextStop = transModel.getStop(nextStopID);
+                    System.out.println(" the vehicle is heading to stop: " + Integer.toString(nextStopID) + " - " + nextStop.getName() + "\n");
 
                     // find distance to stop to determine next event time
                     // conversion is used to translate time calculation from hours to minutes
-                    activeBus.setLocation(nextLocation);
+                    activeVehicle.setLocation(nextLocation);
 
-                    // generate next event for this bus
-                    eventQueue.add(new SimEvent(activeEvent.getRank() + 1, "move_bus", activeEvent.getID()));
-                    break;
-                case "move_rail":
-                    // identify the bus that will move
-                    Rail activeRail = busModel.getRail(activeEvent.getID());
-                    System.out.println(" the rail being observed is: " + Integer.toString(activeRail.getID()));
-
-                    // identify the current stop
-                    Route activeRailRoute = busModel.getRoute(activeRail.getRouteID());
-                    System.out.println(" the bus is driving on route: " + Integer.toString(activeRailRoute.getID()));
-
-                    int activeRailLocation = activeRail.getLocation();
-                    int activeRailStopID = activeRailRoute.getStopID(activeRailLocation);
-                    Stop activeRailStop = busModel.getStop(activeRailStopID);
-                    System.out.println(" the bus is currently at stop: " + Integer.toString(activeRailStop.getID()) + " - " + activeRailStop.getName());
-
-                    // drop off and pickup new passengers at current stop
-                    int currentRailPassengers = activeRail.getRiders().size();
-                    //pick up riders from stop and then add to vehicle
-                    ArrayList<Rider> railRiderList = activeRailStop.exchangeRiders(currentRailPassengers, activeRail.getCapacity());
-                    System.out.println(" passengers pre-stop: " + Integer.toString(currentRailPassengers) + " post-stop: " + (currentRailPassengers + railRiderList.size()));
-                    //Remove riders from bus. They have reached their destination.
-                    for(Rider rider : activeRail.getRiders()) {
-                    	if(rider.getDestinationBusStop() == activeRailStopID) {
-                    		activeRail.removeRiderFromBus(rider);
-                    	}
-                    }
-                    
-                    for(Rider rider : railRiderList) {
-                    	activeRail.addRiderToVehicle(rider);
-                    }
-
-                    // determine next stop
-                    int nextRailLocation = activeRailRoute.getNextLocation(activeRailLocation);
-                    int nextRailStopID = activeRailRoute.getStopID(nextRailLocation);
-                    Stop nextRailStop = busModel.getStop(nextRailStopID);
-                    System.out.println(" the bus is heading to stop: " + Integer.toString(nextRailStopID) + " - " + nextRailStop.getName() + "\n");
-
-                    // find distance to stop to determine next event time
-                    //*****Need to determine how to calculate distance using roads
-                    Double travelRailDistance = activeRailStop.findDistance(nextRailStop);
-                    // conversion is used to translate time calculation from hours to minutes
-                    int travelRailTime = 1 + (travelRailDistance.intValue() * 60 / activeRail.getSpeed());
-                    activeRail.setLocation(nextRailLocation);
-
-                    // generate next event for this bus
-                    eventQueue.add(new SimEvent(activeEvent.getRank() + travelRailTime, "move_rail", activeEvent.getID()));
+                    // generate next event for this vehicle
+                    eventQueue.add(new SimEvent(activeEvent.getRank() + 1, "move_vehicle", activeEvent.getID()));
                     break;
                 default:
                     System.out.println(" event not recognized");
