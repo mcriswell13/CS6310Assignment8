@@ -78,15 +78,15 @@ public class SimQueue {
                     		roadCount++;
                     		if(activeRoute.getRouteType() == "BUS") {
                     			double speedUsed = Math.max(activeVehicle.getSpeed(), road.getMaximumSpeedAllowed());
-                    			hours = hours + ((double)(road.getTrafficVolume()/100.0)*(road.getLength()/speedUsed));
+                    			hours = hours + (((1.0)/(double)(road.getTrafficVolume()/100.0))*(road.getLength()/speedUsed))*(road.getCurvature());//bad traffic should increase time
                     		}
                     		else if (activeRoute.getRouteType() == "RAIL") {
-                    			hours = hours + (road.getLength()/(double)activeVehicle.getSpeed());
+                    			hours = hours + (road.getLength()/(double)activeVehicle.getSpeed())*(road.getCurvature());
                     		}
-                    		distance = distance + road.getLength();
+                    		distance = distance + road.getLength()*(road.getCurvature());
                     	}
                     }
-                    System.out.println(" distance traveled: " + distance);
+                    System.out.println(" distance traveled: " + distance + " miles");
                     System.out.println(" time traveled: " + hours + " hours");
                     if(roadCount == 0) {
                     	throw new Exception("There should be at least one road in between these 2 stops.");

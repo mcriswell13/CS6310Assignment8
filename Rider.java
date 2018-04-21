@@ -1,33 +1,27 @@
 package edu.gatech;
 
 public class Rider {
-    private Integer ID;
-    private Integer currentBusStopID;
-    private Integer destinationBusStopID;
+    private Integer currentStopID;
+    private Integer destinationStopID;
 
-    public Rider(int uniqueValue, int currentBusStopID, int destinationBusStopID) {
-        this.ID = uniqueValue;
-        this.currentBusStopID = currentBusStopID;
-        this.destinationBusStopID = destinationBusStopID;
+    public Rider(int currentStopID, int destinationStopID) {
+        this.currentStopID = currentStopID;
+        this.destinationStopID = destinationStopID;
     }
 
-    public Integer getID() {
-        return this.ID;
+    public int getDestinationStop() {
+        return this.destinationStopID;
     }
 
-    public int getDestinationBusStop() {
-        return this.destinationBusStopID;
+    public void setDestinationStop(int stopID) {
+        this.destinationStopID = stopID;
     }
 
-    public void setDestinationBusStop(int busStopID) {
-        this.destinationBusStopID = busStopID;
+    public int getCurrentStop() {
+        return this.currentStopID;
     }
 
-    public int getCurrentBusStop() {
-        return this.currentBusStopID;
-    }
-
-    public void setCurrentBusStop(int busStopID) {
-        this.currentBusStopID = busStopID;
+    public void setCurrentStop(int stopID) {
+        this.currentStopID = stopID;
     }
 }

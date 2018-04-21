@@ -51,7 +51,7 @@ public class SimDriver {
 			case "add_road_between_stops":
 				int roadBetweenStopID = martaModel.makeRoadBetweenStop(Integer.parseInt(tokens[1]),
 						Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]), Double.parseDouble(tokens[4]),
-						Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]));
+						Integer.parseInt(tokens[5]), Integer.parseInt(tokens[6]), Double.parseDouble(tokens[7]));
 				System.out.println(" new road between stops: " + Integer.toString(roadBetweenStopID) + " created");
 				break;
 			case "add_bus":
@@ -206,7 +206,7 @@ public class SimDriver {
 				latitude = rs.getDouble("latitude");
 				longitude = rs.getDouble("longitude");
 
-				// martaModel.makeStop(stopID,stopName,0);
+			    martaModel.makeStop(stopID,stopName);
 				recordCounter++;
 			}
 			System.out.println(Integer.toString(recordCounter) + " added");
@@ -219,7 +219,7 @@ public class SimDriver {
 				routeID = rs.getInt("route");
 				routeName = rs.getString("route_name");
 
-				// martaModel.makeRoute(routeID, routeID, routeName);
+				martaModel.makeRoute(routeID, routeID, routeName, "BUS");
 				recordCounter++;
 
 				// initialize the list of stops for the route as needed
@@ -234,7 +234,7 @@ public class SimDriver {
 			while (rs.next()) {
 				routeID = rs.getInt("route");
 				stopID = rs.getInt("min_stop_id");
-				// direction = rs.getString("direction");
+				//direction = rs.getString("direction");
 
 				targetList = routeLists.get(routeID);
 				if (!targetList.contains(stopID)) {
@@ -274,7 +274,7 @@ public class SimDriver {
 				int startingPosition = 0;
 				int skip = Math.max(1, routeLength / busesOnRoute);
 				for (int i = 0; i < busesOnRoute; i++) {
-					// martaModel.makeBus(busID, routeID, startingPosition + i * skip, 0, 10, 1);
+					martaModel.makeVehicle(busID, routeID, startingPosition + i * skip, 0, 10, "BUS");
 					simEngine.addNewEvent(0, "move_bus", busID++);
 					recordCounter++;
 				}

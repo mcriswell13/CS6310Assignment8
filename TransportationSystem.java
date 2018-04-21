@@ -41,8 +41,8 @@ public class TransportationSystem {
         return null;
     }
 
-    public int makeRoadBetweenStop(int routeID, int maximumSpeedAllowed, int trafficVolume, Double length, int currentStopID, int destinationStopID) {
-        Road road = new Road(maximumSpeedAllowed, trafficVolume, length, currentStopID, destinationStopID);
+    public int makeRoadBetweenStop(int routeID, int maximumSpeedAllowed, int trafficVolume, Double length, int currentStopID, int destinationStopID, Double curvature) {
+        Road road = new Road(maximumSpeedAllowed, trafficVolume, length, currentStopID, destinationStopID, curvature);
         Route route = this.getRoute(routeID);
         route.addNewRoadBetweenStop(road);
         return routeID;
