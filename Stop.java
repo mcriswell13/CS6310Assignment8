@@ -52,6 +52,9 @@ public class Stop {
     public void addRiderToStop(Rider rider) {
         this.ridersOnStop.add(rider);
     }
+    public void addRiderToStop(int index, Rider rider) {
+        this.ridersOnStop.add(index, rider);
+    }
 
     public Double findDistance(Stop destination) {
         return null;

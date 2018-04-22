@@ -40,13 +40,9 @@ public class SimQueue {
                     System.out.println(" the vehicle is currently at stop: " + Integer.toString(activeStop.getID()) + " - " + activeStop.getName());
 
                     // drop off and pickup new passengers at current stop
-                    int currentPassengers = activeVehicle.getRiders().size();
-                    
-                    System.out.println(" there are " + currentPassengers + " on the vehicle");
+                                      
+                    System.out.println(" there are " + activeVehicle.getRiders().size() + " on the vehicle before exchange");
                     System.out.println(" there are " + activeStop.getRiders().size() + " at the current stop");
-
-                    ArrayList<Rider> riderList = activeStop.exchangeRiders(currentPassengers, activeVehicle.getCapacity());
-                    System.out.println(" passengers pre-stop: " + Integer.toString(currentPassengers));
 
                     ArrayList<Rider> riders = new ArrayList<Rider>();
                     for(Rider rider : activeVehicle.getRiders()) {
@@ -58,11 +54,27 @@ public class SimQueue {
                     	System.out.println("Rider arrived at their destination stop.");
                     	activeVehicle.getRiders().remove(rider);
                     }
-                    System.out.println("Rider list size: " + riderList.size());
-                    for(Rider rider : riderList) 
-                    {
-                    	activeVehicle.addRiderToVehicle(rider);
-                    }  
+                    
+                    int currentPassengers = activeVehicle.getRiders().size();
+                    ArrayList<Rider> ridersForIncorrectBus = new ArrayList<Rider>();
+                    while(activeStop.getRiders().size() > 0 && activeVehicle.getCapacity() != activeVehicle.getRiders().size()) {
+                    	ArrayList<Rider> riderList = activeStop.exchangeRiders(currentPassengers, activeVehicle.getCapacity());
+                        
+                        for(Rider rider : riderList) 
+                        {
+                        	if(activeRoute.getStopID(rider.getDestinationStop()) != null) {
+                        		activeVehicle.addRiderToVehicle(rider);
+                        	}
+                        	else {
+                        		System.out.println("Rider added to temp array list");
+                        		ridersForIncorrectBus.add(rider);
+                        	}
+                        } 
+                    }
+                    for(Rider rider : ridersForIncorrectBus) {
+                    	activeStop.addRiderToStop(0, rider);
+                    }
+                     
                     
                     System.out.println(" there are " + activeVehicle.getRiders().size() + " on the vehicle after pickup");
                     
